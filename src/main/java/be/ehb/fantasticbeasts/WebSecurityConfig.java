@@ -1,56 +1,24 @@
 package be.ehb.fantasticbeasts;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import be.ehb.fantasticbeasts.controllers.LogoutHandler;
 
-import javax.sql.DataSource;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
-@EnableWebSecurity
+
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+    private final LogoutHandler logoutHandler;
 
-    @Autowired
-    private DataSource dataSource;
-
-    public UserDetailsService userDetailsService(){
-        return new CustomUserDetailsService();
-    }
-
-    public BCryptPasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
-
-    public DaoAuthenticationProvider authenticationProvider(){
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService());
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
-
-        return authenticationProvider;
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception{
-        authenticationManagerBuilder.authenticationProvider(authenticationProvider());
+    public WebSecurityConfig(LogoutHandler logoutHandler) {
+        this.logoutHandler = logoutHandler;
     }
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception{
-        httpSecurity.authorizeRequests()
-                .antMatchers("/cart").authenticated()
-                .anyRequest().permitAll()
-                .and()
-                .formLogin()
-                .usernameParameter("username")
-                .defaultSuccessUrl("/registerSuccess")
-                .permitAll()
-                .and()
-                .logout().logoutSuccessUrl("/").permitAll();
+        httpSecurity.oauth2Login().and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).addLogoutHandler(logoutHandler);
     }
+
 }
