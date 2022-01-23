@@ -8,36 +8,39 @@
 </head>
 <body>
 <div th:replace="~{navbar :: navigation}"></div>
+<div th:each="item : ${allCarts}">
+    <table class="table" >
+        <thead>
+        <tr>
+            <th scope="col">Product name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Category</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Price</th>
+            <th scope="col">Subtotal</th>
+            <th scope="col">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+            <tr th:each="prod: ${item.cartItems}">
+                <td><span th:text="${prod.product.name}"></span></td>
+                <td><span th:text="${prod.product.description}"></span></td>
+                <td><span th:text="${prod.product.category}"></span></td>
+                <td><span th:text="${prod.amount}"></span></td>
+                <td><span th:text="${prod.product.price}"></span></td>
+                <td><span th:text="${prod.subTotal()}"></span></td>
+                <td>
+                    <form th:method="delete" th:action="@{/cart/delete/{id}(id=${prod.product.product_id})}">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
-<table class="table">
-    <thead>
-    <tr>
-        <th scope="col">#</th>
-        <th scope="col">First</th>
-        <th scope="col">Last</th>
-        <th scope="col">Handle</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <th scope="row">1</th>
-        <td>Mark</td>
-        <td>Otto</td>
-        <td>@mdo</td>
-    </tr>
-    <tr>
-        <th scope="row">2</th>
-        <td>Jacob</td>
-        <td>Thornton</td>
-        <td>@fat</td>
-    </tr>
-    <tr>
-        <th scope="row">3</th>
-        <td colspan="2">Larry the Bird</td>
-        <td>@twitter</td>
-    </tr>
-    </tbody>
-</table>
+    <p th:text="'Total: ' + ${item.total()}"></p>
+    <a th:href="@{/order}">Place order</a>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 </body>

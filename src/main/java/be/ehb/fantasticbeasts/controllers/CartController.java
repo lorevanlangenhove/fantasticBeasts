@@ -3,106 +3,90 @@ package be.ehb.fantasticbeasts.controllers;
 import be.ehb.fantasticbeasts.entities.Cart;
 import be.ehb.fantasticbeasts.entities.CartItem;
 import be.ehb.fantasticbeasts.entities.Product;
+import be.ehb.fantasticbeasts.repo.CartItemRepo;
 import be.ehb.fantasticbeasts.repo.CartRepo;
 import be.ehb.fantasticbeasts.repo.ProductRepo;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpSession;
-import java.util.Optional;
 
 @Controller
 public class CartController {
     ProductRepo productRepo;
+    CartItemRepo cartItemRepo;
     CartRepo cartRepo;
+    OidcUser principal;
+
+    @Autowired
+    public CartController(ProductRepo productRepo, CartItemRepo cartItemRepo, CartRepo cartRepo) {
+        this.productRepo = productRepo;
+        this.cartItemRepo = cartItemRepo;
+        this.cartRepo = cartRepo;
+    }
 
     @RequestMapping(value = "/cart", method = RequestMethod.GET)
     public String cart(){
         return "cart";
     }
 
-    /*@RequestMapping(value = "/cart/buy/{prodId}", method = RequestMethod.GET)
-    public String buy(@PathVariable("prodId") int prodId, HttpSession session){
-        Cart cart = new Cart();
+    @ModelAttribute("allItems")
+    public Iterable<CartItem> findAllItems(){
+        return cartItemRepo.findAll();
+    }
+
+    @ModelAttribute("allCarts")
+    public Iterable<Cart> findAllCarts(){
+        return cartRepo.findAll();
+    }
+
+    @RequestMapping(value = "/cart/add/{prodId}", method = RequestMethod.GET)
+    public String addProduct(@PathVariable(value = "prodId")int prodId, @AuthenticationPrincipal OidcUser principal){
         Product product = productRepo.findById(prodId).orElse(null);
-        cart.addProduct(product, 1);
-        return "";
-    }*/
-
-
-
-   /* public CartController(ProductRepo productRepo, CartRepo cartRepo) {
-        this.productRepo = productRepo;
-        this.cartRepo = cartRepo;
-    }
-
-    private Cart getCurrentCart(){
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return cartRepo.findByUserUsername(username).orElse(null);
-    }
-
-    @RequestMapping(value = "/cart")
-    public ResponseEntity<Cart> getCart(){
-        return ResponseEntity.ok(getCurrentCart());
-    }
-
-    @PostMapping("/cart/add/{prodId}/{amount}")
-    public ResponseEntity<Cart> addProductToCart(@PathVariable int prodId, @PathVariable int amount){
-        Cart cart = saveItem(prodId, amount);
-        if(cart == null){
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(cart);
-    }
-
-    @PutMapping("/cart/update/{prodId}/{amount}")
-    public ResponseEntity<Cart> updateAmount(@PathVariable int prodId, @PathVariable int amount){
-        if(!productRepo.existsById(prodId)){
-            return ResponseEntity.notFound().build();
-        }
-
-        Cart cart = getCurrentCart();
-        CartItem cartItem = getCartItemById(cart, prodId);
-        if(cartItem == null){
-            return ResponseEntity.notFound().build();
-        }
-
-        cartItem.setAmount(amount);
-        cartRepo.save(cart);
-
-        return ResponseEntity.ok(cart);
-    }
-
-    @DeleteMapping("/cart/delete/{prodId}")
-    public ResponseEntity<Cart> deleteCartItem(@PathVariable int prodId){
-        if(!productRepo.existsById(prodId)){
-            return ResponseEntity.notFound().build();
-        }
-
-        Cart cart = getCurrentCart();
-        cart.getCartItems().removeIf(cartItem -> cartItem.getProduct().getProduct_id() == prodId);
-        return ResponseEntity.ok(cartRepo.save(cart));
-    }
-
-    private Cart saveItem(int prodId, int amount) {
-        Product product = productRepo.findById(prodId).orElse(null);
-        if(product == null){
+        if (product == null) {
             return null;
         }
 
-        Cart cart = getCurrentCart();
-        CartItem cartItem = getCartItemById(cart, prodId);
-        if(cartItem == null){
-            cartItem = new CartItem(cart, amount, product);
-            cart.addCartItem(cartItem);
-        }else{
-            cartItem.setAmount(cartItem.getAmount() + amount);
+        if(principal == null){
+            return null;
         }
-        return cartRepo.save(cart);
+
+        String email = principal.getEmail();
+        Cart cart = cartRepo.findByUserEmail(email).orElse(null);
+
+        CartItem item = getItemById(cart, prodId);
+        if (item == null) {
+            item = new CartItem(cart, 1, product);
+            cart.addCartItem(item);
+        } else {
+            item.setAmount(item.getAmount() + 1);
+        }
+        cartRepo.save(cart);
+        System.out.println(cart);
+        return "cart";
     }
 
-    private CartItem getCartItemById(Cart cart, int prodId) {
-        return cart.getCartItems().stream().filter(cartItem -> cartItem.getProduct().getProduct_id() == prodId).findFirst().orElse(null);
-    }*/
+    @RequestMapping(value = "/cart/delete/{prodId}", method = RequestMethod.DELETE)
+    public String deleteProduct(@PathVariable(value = "prodId")int prodId, @AuthenticationPrincipal OidcUser principal){
+
+        if(!productRepo.existsById(prodId)){
+            return null;
+        }
+
+        if(principal == null){
+            return null;
+        }
+
+        String email = principal.getEmail();
+        Cart cart = cartRepo.findByUserEmail(email).orElse(null);
+        cart.getCartItems().removeIf(item -> item.getProduct().getProduct_id() == prodId);
+        cartRepo.save(cart);
+        return "cart";
+    }
+
+    public CartItem getItemById(Cart cart, int prodId){
+        return cart.getCartItems().stream().filter(item -> item.getProduct().getProduct_id() == prodId).findFirst().orElse(null);
+    }
 }

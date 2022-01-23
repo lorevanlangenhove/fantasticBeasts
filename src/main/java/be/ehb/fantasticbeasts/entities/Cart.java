@@ -53,6 +53,10 @@ public class Cart {
         cartItems.add(cartItem);
     }
 
+    public void removeCartItem(CartItem cartItem){
+        cartItems.remove(cartItem);
+    }
+
     public void addProduct(Product product, int amount){
         CartItem cartItem = new CartItem(amount, product);
         cartItems.add(cartItem);

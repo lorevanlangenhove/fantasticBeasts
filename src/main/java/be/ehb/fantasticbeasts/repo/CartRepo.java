@@ -6,6 +6,6 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Optional;
 
 public interface CartRepo extends CrudRepository<Cart, Integer> {
-    Optional<Cart> findByUserUsername(String username);
+    Optional<Cart> findByUserEmail(String email);
 }
 

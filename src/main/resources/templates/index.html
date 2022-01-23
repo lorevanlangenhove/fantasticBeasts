@@ -17,7 +17,7 @@
                 <h6 class="card-subtitle mb-2 text-muted" th:text="${product.category}"></h6>
                 <p class="card-text" th:text="${product.price}"></p>
                 <a th:href="@{/{id}(id = ${product.product_id})}" class="card-link">Details</a>
-                <a th:href="@{/cart}" class="card-link">Add to cart</a>
+                <a th:href="@{/cart/add/{id}(id = ${product.product_id})}" class="card-link">Add to cart</a>
             </div>
         </div>
     </div>
