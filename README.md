@@ -6,3 +6,4 @@
 - https://o7planning.org/10683/create-a-shopping-cart-web-application-with-spring-boot-hibernate#a14238621
 - https://www.javatpoint.com/lombok-java
 - https://frontbackend.com/thymeleaf/how-to-implement-if-else-in-thymeleaf-with-spring-boot
+- https://www.baeldung.com/spring-boot-crud-thymeleaf
