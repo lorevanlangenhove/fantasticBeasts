@@ -7,3 +7,4 @@
 - https://www.javatpoint.com/lombok-java
 - https://frontbackend.com/thymeleaf/how-to-implement-if-else-in-thymeleaf-with-spring-boot
 - https://www.baeldung.com/spring-boot-crud-thymeleaf
+- https://www.thymeleaf.org/doc/articles/springsecurity.html
