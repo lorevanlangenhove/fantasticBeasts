@@ -89,4 +89,17 @@ public class CartController {
     public CartItem getItemById(Cart cart, int prodId){
         return cart.getCartItems().stream().filter(item -> item.getProduct().getProduct_id() == prodId).findFirst().orElse(null);
     }
+
+    @RequestMapping(value = "/order", method = RequestMethod.GET)
+    public String order(@AuthenticationPrincipal OidcUser principal){
+        if(principal == null){
+            return null;
+        }
+        String email = principal.getEmail();
+        Cart cart = cartRepo.findByUserEmail(email).orElse(null);
+        cart.empty();
+        cartRepo.save(cart);
+
+        return "order";
+    }
 }

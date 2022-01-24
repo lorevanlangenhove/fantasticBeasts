@@ -9,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+
+import java.awt.color.ProfileDataException;
 import java.util.Optional;
 
 @Controller
@@ -19,6 +21,11 @@ public class ProductController {
     @Autowired
     public ProductController(ProductRepo repo) {
         this.repo = repo;
+    }
+
+    @ModelAttribute("product")
+    public Product product(){
+        return new Product();
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -39,9 +46,41 @@ public class ProductController {
         return "redirect:../index";
     }
 
-    @ModelAttribute("product")
-    public Product product(){
-        return new Product();
+    @RequestMapping(value = "/add", method = RequestMethod.GET)
+    public String add(){
+        return "add";
+    }
+
+    @RequestMapping(value = "/product/add", method = RequestMethod.POST)
+    public String addProduct(Product product){
+        repo.save(product);
+        return "index";
+    }
+
+    @RequestMapping(value = "/update", method = RequestMethod.GET)
+    public String update(){
+        return "add";
+    }
+
+    @RequestMapping(value = "product/update/{prodId}", method = RequestMethod.PUT)
+    public String updateProduct(@PathVariable(value = "prodId")int prodId){
+        Product product = repo.findById(prodId).orElse(null);
+        if(product == null){
+            return null;
+        }
+        repo.save(product);
+
+        return "redirect:../index";
+    }
+
+    @RequestMapping(value = "product/delete/{prodId}", method = RequestMethod.PUT)
+    public String deleteProduct(@PathVariable(value = "prodId")int prodId){
+        Product product =  repo.findById(prodId).orElse(null);
+        if(product == null){
+            return null;
+        }
+        repo.delete(product);
+        return "redirect:../index";
     }
 
     @ModelAttribute("all")
