@@ -8,3 +8,5 @@
 - https://frontbackend.com/thymeleaf/how-to-implement-if-else-in-thymeleaf-with-spring-boot
 - https://www.baeldung.com/spring-boot-crud-thymeleaf
 - https://www.thymeleaf.org/doc/articles/springsecurity.html
+- https://blog.indrek.io/articles/using-environment-variables-with-spring-boot/
+- https://springhow.com/thymeleaf-crud-example/

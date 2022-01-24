@@ -9,14 +9,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.awt.color.ProfileDataException;
 import java.util.Optional;
 
 @Controller
 public class ProductController {
 
-    ProductRepo repo;
+    private final ProductRepo repo;
 
     @Autowired
     public ProductController(ProductRepo repo) {
@@ -52,41 +52,53 @@ public class ProductController {
     }
 
     @RequestMapping(value = "/product/add", method = RequestMethod.POST)
-    public String addProduct(Product product){
+    public String addProduct(Product product, RedirectAttributes redirectAttributes){
         repo.save(product);
-        return "index";
+        redirectAttributes.addFlashAttribute("alert", "Product is added to the catalogue!");
+        redirectAttributes.addFlashAttribute("alertType", "Success");
+        return "redirect:/";
     }
 
-
-    @RequestMapping(value = "product/edit/{prodId}", method = RequestMethod.GET)
-    public String editProduct(@PathVariable(value = "prodId")int prodId){
+    @RequestMapping(value = "/product/edit/{prodId}", method = RequestMethod.GET)
+    public String editProduct(@PathVariable(value = "prodId")int prodId, ModelMap modelMap){
         Product product = repo.findById(prodId).orElse(null);
         if(product == null){
             return null;
         }
+        modelMap.addAttribute(product);
         return "update";
     }
 
-    @RequestMapping(value = "product/update/{prodId}", method = RequestMethod.PUT)
-    public String updateProduct(@PathVariable(value = "prodId")int prodId){
+    @RequestMapping(value = "/product/update/{prodId}", method = RequestMethod.POST)
+    public String updateProduct(@PathVariable(value = "prodId")int prodId, Product p, RedirectAttributes redirectAttributes){
         Product product = repo.findById(prodId).orElse(null);
         if(product == null){
             return null;
         }
-        repo.save(product);
 
-        return  "redirect: /index";
+        product.setName(p.getName());
+        product.setDescription(p.getDescription());
+        product.setPrice(p.getPrice());
+        product.setCategory(p.getCategory());
+
+        repo.save(product);
+        redirectAttributes.addFlashAttribute("alert", "Product has been successfully edited");
+        redirectAttributes.addFlashAttribute("alertType", "Success");
+
+        return "redirect:/";
     }
 
-    @RequestMapping(value = "product/delete/{prodId}", method = RequestMethod.DELETE)
-    public String deleteProduct(@PathVariable(value = "prodId")int prodId){
+    @RequestMapping(value = "/product/delete/{prodId}", method = RequestMethod.DELETE)
+    public String deleteProduct(@PathVariable(value = "prodId")int prodId, RedirectAttributes redirectAttributes){
         Product product =  repo.findById(prodId).orElse(null);
         if(product == null){
             return null;
         }
 
         repo.delete(product);
-        return "redirect: /index";
+        redirectAttributes.addFlashAttribute("alert", "Product has been deleted from the catalogue!");
+        redirectAttributes.addFlashAttribute("alertType", "Success");
+        return "redirect:/";
     }
 
     @ModelAttribute("all")

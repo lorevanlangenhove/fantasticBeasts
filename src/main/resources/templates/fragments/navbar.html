@@ -13,6 +13,9 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <a class="navbar-brand" th:href="@{/}">
+                    <img src="https://img.icons8.com/ios/50/000000/cat-butt.png" class="d-inline-block align-text-top"/>
+                </a>
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
                         <a class="nav-link active" th:href="@{/}" th:text="#{home}"></a>
@@ -33,7 +36,7 @@
                         <li class="nav-item" sec:authorize="!isAuthenticated()">
                             <a class="nav-link" th:href="@{/oauth2/authorization/auth0}" th:text="#{login}"></a>
                         </li>
-                        <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <li class="nav-item" sec:authorize="isAuthenticated()" th:if="${#request.userPrincipal.principal.email == 'admin@fantasticbeasts.be'}">
                             <a class="nav-link" th:href="@{/add}" th:text="#{addProd}"></a>
                         </li>
                         <li class="nav-item" sec:authorize="isAuthenticated()">

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -21,7 +22,7 @@ public class Cart {
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter @Getter
-    private Set<CartItem> cartItems;
+    private Set<CartItem> cartItems = new HashSet<CartItem>();
 
     public double total(){
         return cartItems.stream().map(CartItem::subTotal).reduce(0.0, Double::sum);

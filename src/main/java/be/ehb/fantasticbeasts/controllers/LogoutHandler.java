@@ -1,7 +1,6 @@
 package be.ehb.fantasticbeasts.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.data.ConditionalOnRepositoryType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
@@ -38,7 +37,6 @@ public class LogoutHandler extends SecurityContextLogoutHandler {
         }catch (IOException e){
             System.out.println(e);
         }
-
     }
 
     private ClientRegistration getClientRegistration(){

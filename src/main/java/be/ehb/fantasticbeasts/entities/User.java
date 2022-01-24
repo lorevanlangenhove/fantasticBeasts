@@ -23,9 +23,6 @@ public class User {
     @Setter @Getter
     private String email;
 
-    @NotBlank
-    @Setter @Getter
-    private String password;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     @Setter @Getter
@@ -36,10 +33,9 @@ public class User {
         cart.setUser(this);
     }
 
-    public User(String username, String email, String password) {
+    public User(String username, String email) {
         this.username = username;
         this.email = email;
-        this.password = password;
     }
 
 }
