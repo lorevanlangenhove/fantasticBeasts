@@ -1,5 +1,8 @@
 package be.ehb.fantasticbeasts.entities;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
@@ -10,17 +13,22 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter @Getter
     private int user_id;
 
     @NotBlank
+    @Setter @Getter
     private String username;
 
+    @Setter @Getter
     private String email;
 
     @NotBlank
+    @Setter @Getter
     private String password;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @Setter @Getter
     private Cart cart;
 
     public User(){
@@ -34,43 +42,4 @@ public class User {
         this.password = password;
     }
 
-    public int getUser_id() {
-        return user_id;
-    }
-
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Cart getCart() {
-        return cart;
-    }
-
-    public void setCart(Cart cart) {
-        this.cart = cart;
-    }
 }

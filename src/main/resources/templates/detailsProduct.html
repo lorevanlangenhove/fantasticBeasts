@@ -17,8 +17,8 @@
         <p class="card-text" th:text="${product.price}"></p>
         <a th:href="@{/}" class="card-link" th:text="#{back}"></a>
         <a sec:authorize="isAuthenticated()" th:href="@{/cart/add/{id}(id = ${product.product_id})}" class="card-link" th:text="#{addCart}"></a>
-        <a sec:authorize="isAuthenticated()" th:href="@{/product/update/{id}(id = ${product.product_id})}" class="card-link" th:text="#{updateProd}"></a>
-        <form th:method="delete" th:action="@{/product/delete/{id}(id=${product.product_id})}">
+        <a sec:authorize="isAuthenticated()" th:href="@{/product/edit/{id}(id = ${product.product_id})}" class="card-link" th:text="#{updateProd}"></a>
+        <form sec:authorize="isAuthenticated()" th:method="delete" th:action="@{/product/delete/{id}(id=${product.product_id})}">
             <button type="submit" class="btn btn-danger" th:text="#{deleteBtn}"></button>
         </form>
     </div>

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -18,7 +18,7 @@
                     <h6 class="card-subtitle mb-2 text-muted" th:text="${product.category}"></h6>
                     <p class="card-text" th:text="${product.price}"></p>
                     <a th:href="@{/{id}(id = ${product.product_id})}" class="card-link" th:text="#{details}"></a>
-                    <a th:href="@{/cart}" class="card-link" th:text="#{addCart}"></a>
+                    <a sec:authorize="isAuthenticated()" th:href="@{/cart/add/{id}(id = ${product.product_id})}" class="card-link" th:text="#{addCart}"></a>
                 </div>
             </div>
         </div>

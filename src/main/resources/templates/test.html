@@ -12,6 +12,12 @@
   <h2 th:text="${profile.get('name')}"></h2>
   <p th:text="${profile.get('email')}"></p>
   <a th:href="@{/logout}">Log Out</a>
+  <div class="content mb-auto container w-full p-20 m-4 mx-auto my-2 bg-slate-100 border-2 h-96 rounded-xl">
+    <h1 th:text="#{wrong}">Something went wrong!</h1>
+    <div >
+      <h2><a th:href="@{/}" th:text="#{back}"></a></h2>
+    </div>
+  </div>
 </div>
 </body>
 </html>
